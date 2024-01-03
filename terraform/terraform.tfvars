@@ -1,0 +1,1 @@
+container_image = "624618927537.dkr.ecr.ap-southeast-2.amazonaws.com/sage_docker:latest"
