@@ -5,7 +5,7 @@ app = FastAPI()
 
 @app.get('/ping')
 def pint():
-    return "pong"
+    return {"pong":"pong"}
 
 
 @app.post('/invocations')
