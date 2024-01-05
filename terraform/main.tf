@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "sagemaker_assume_role_policy" {
 }
 
 resource "aws_iam_role" "sagemaker_access_iam_role" {
-  name               = "sagemaker_access_iam_role2"
+  name               = "sagemaker_access_iam_role5"
   path               = "/system/"
   assume_role_policy = data.aws_iam_policy_document.sagemaker_assume_role_policy.json
 }
@@ -28,7 +28,7 @@ variable container_image {}
 
 
 resource "aws_sagemaker_model" "mnist-model" {
-  name               = "mnist-model"
+  name               = "mnist-model1"
   execution_role_arn = aws_iam_role.sagemaker_access_iam_role.arn
 
   primary_container {
