@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,Response
 from pydub import AudioSegment
 import subprocess
 import whisper
@@ -60,6 +60,11 @@ def pint():
 
 
 @app.post('/invocations')
-def invoke():
-    resulted_text = get_score()
-    return {"testing": resulted_text}
+def invoke(response: Response):
+    try:
+        resulted_text = get_score()
+        return {"testing": resulted_text}
+    except Exception as e:
+        print(e)
+        response.status_code = 500
+        return {"message": "something went wrong"}

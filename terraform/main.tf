@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "sagemaker_assume_role_policy" {
 }
 
 resource "aws_iam_role" "sagemaker_access_iam_role" {
-  name               = "sagemaker_access_iam_role5"
+  name               = "sagemaker_access_iam_role6"
   path               = "/system/"
   assume_role_policy = data.aws_iam_policy_document.sagemaker_assume_role_policy.json
 }
