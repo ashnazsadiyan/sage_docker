@@ -4,44 +4,45 @@ import subprocess
 import whisper
 from sentence_transformers import SentenceTransformer, util
 import os
+import asyncio
 
 app = FastAPI()
 
 
 #  functions
-class Question:
-    def __init__(self, answer: str, start_time: float, end_time: float):
-        self.answer = answer
-        self.start_time = start_time
-        self.end_time = end_time
-        self.expected = ""
-        self.given = ""
-        self.result = 0
+# class Question:
+#     def __init__(self, answer: str, start_time: float, end_time: float):
+#         self.answer = answer
+#         self.start_time = start_time
+#         self.end_time = end_time
+#         self.expected = ""
+#         self.given = ""
+#         self.result = 0
 
 
-def get_audio(start_time: float, end_time: float, _id: str, identification: str, ):
-    audio = AudioSegment.from_file(f'{identification}.WAV')
-    audio_segment = audio[start_time:end_time]
-    extracted_file = f"{_id}.mp3"
-    audio_segment.export(extracted_file, format='mp3')
+# def get_audio(start_time: float, end_time: float, _id: str, identification: str, ):
+#     audio = AudioSegment.from_file(f'{identification}.WAV')
+#     audio_segment = audio[start_time:end_time]
+#     extracted_file = f"{_id}.mp3"
+#     audio_segment.export(extracted_file, format='mp3')
 
 
-def get_text(file_name: str):
-    model = whisper.load_model("base")
-    result = model.transcribe(file_name, fp16=False)
-    return result["text"]
+# def get_text(file_name: str):
+#     model = whisper.load_model("base")
+#     result = model.transcribe(file_name, fp16=False)
+#     return result["text"]
 
 
-def check_text(expected_answer: str, given_answer: str, question: str):
-    model = SentenceTransformer('all-MiniLM-L6-v2')
-    embeddings = model.encode([expected_answer, given_answer], convert_to_tensor=True)
-    cosine_score = util.pytorch_cos_sim(embeddings[0], embeddings[1])
-    similarity_score = cosine_score.item()
-    print(f"Similarity Score for question {question}: {similarity_score}")
-    return similarity_score
+# def check_text(expected_answer: str, given_answer: str, question: str):
+#     model = SentenceTransformer('all-MiniLM-L6-v2')
+#     embeddings = model.encode([expected_answer, given_answer], convert_to_tensor=True)
+#     cosine_score = util.pytorch_cos_sim(embeddings[0], embeddings[1])
+#     similarity_score = cosine_score.item()
+#     print(f"Similarity Score for question {question}: {similarity_score}")
+#     return similarity_score
 
 
-def get_score():
+async def get_score():
     subprocess.run(['ffmpeg', '-i',
                     'https://d8cele0fjkppb.cloudfront.net/ivs/v1/624618927537/y16bDr6BzuhG/2023/12/14/11/3/0lm3JnI0dvgo/media/hls/master.m3u8',
                     '-b:a', '64k', 'abscs.WAV'])
@@ -52,8 +53,18 @@ def get_score():
     #     "Regularization is a technique that adds a penalty term to the objective function of a machine learning algorithm. It is used to prevent overfitting and to encourage the model to find a simpler and more generalizable solution.",
     #     audio_text, "What is regularization in machine learning?")
     # print(result, 'result')
-    file_is_there = os.path.exists('abscs.WAV')
-    return file_is_there
+    # file_is_there = os.path.exists('abscs.WAV')
+    # return file_is_there
+    print("starting to download")
+    process = await asyncio.create_subprocess_exec(
+        'ffmpeg', '-i',
+        'https://d8cele0fjkppb.cloudfront.net/ivs/v1/624618927537/y16bDr6BzuhG/2023/12/14/11/3/0lm3JnI0dvgo/media/hls/master.m3u8',
+        '-b:a', '64k', '657ae0c1ec9a6e346d803180.WAV',
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE
+    )
+    stdout, stderr = await process.communicate()
+    return f"result-get_score - {os.path.exists('657ae0c1ec9a6e346d803180.WAV')}"
 
 
 @app.get('/ping')
@@ -62,9 +73,9 @@ def pint():
 
 
 @app.get('/invocations')
-def invoke(response: Response):
+async def invoke(response: Response):
     try:
-        resulted_text = get_score()
+        resulted_text = await get_score()
         return {"testing": resulted_text}
     except Exception as e:
         print(e)
