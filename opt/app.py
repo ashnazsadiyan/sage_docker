@@ -1,8 +1,9 @@
-from fastapi import FastAPI,Response
+from fastapi import FastAPI, Response
 from pydub import AudioSegment
 import subprocess
 import whisper
-from sentence_transformers import SentenceTransformer,util
+from sentence_transformers import SentenceTransformer, util
+import os
 
 app = FastAPI()
 
@@ -43,15 +44,16 @@ def check_text(expected_answer: str, given_answer: str, question: str):
 def get_score():
     subprocess.run(['ffmpeg', '-i',
                     'https://d8cele0fjkppb.cloudfront.net/ivs/v1/624618927537/y16bDr6BzuhG/2023/12/14/11/3/0lm3JnI0dvgo/media/hls/master.m3u8',
-                    '-b:a', '64k', '657ae0c1ec9a6e346d80318f.WAV'])
-    get_audio(0, 168136, '657ae0c1ec9a6e346d803190', '657ae0c1ec9a6e346d80318f')
-    audio_text = get_text("657ae0c1ec9a6e346d803190.mp3")
-    print(audio_text, 'audio_text')
-    result = check_text(
-        "Regularization is a technique that adds a penalty term to the objective function of a machine learning algorithm. It is used to prevent overfitting and to encourage the model to find a simpler and more generalizable solution.",
-        audio_text, "What is regularization in machine learning?")
-    print(result, 'result')
-    return result
+                    '-b:a', '64k', 'abscs.WAV'])
+    # get_audio(0, 168136, '657ae0c1ec9a6e346d8031901', '657ae0c1ec9a6e346d80318f1')
+    # audio_text = get_text("657ae0c1ec9a6e346d8031901.mp3")
+    # print(audio_text, 'audio_text')
+    # result = check_text(
+    #     "Regularization is a technique that adds a penalty term to the objective function of a machine learning algorithm. It is used to prevent overfitting and to encourage the model to find a simpler and more generalizable solution.",
+    #     audio_text, "What is regularization in machine learning?")
+    # print(result, 'result')
+    file_is_there = os.path.exists('abscs.WAV')
+    return file_is_there
 
 
 @app.get('/ping')
@@ -59,7 +61,7 @@ def pint():
     return {"pong": "pong"}
 
 
-@app.post('/invocations')
+@app.get('/invocations')
 def invoke(response: Response):
     try:
         resulted_text = get_score()
