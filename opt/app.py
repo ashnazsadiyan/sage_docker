@@ -27,10 +27,10 @@ def get_audio(start_time: float, end_time: float, _id: str, identification: str,
     audio_segment.export(extracted_file, format='mp3')
 
 
-# def get_text(file_name: str):
-#     model = whisper.load_model("base")
-#     result = model.transcribe(file_name, fp16=False)
-#     return result["text"]
+def get_text(file_name: str):
+    model = whisper.load_model("base")
+    result = model.transcribe(file_name, fp16=False)
+    return result["text"]
 
 
 # def check_text(expected_answer: str, given_answer: str, question: str):
@@ -43,7 +43,6 @@ def get_audio(start_time: float, end_time: float, _id: str, identification: str,
 
 
 async def get_score():
-    # audio_text = get_text("657ae0c1ec9a6e346d8031901.mp3")
     # print(audio_text, 'audio_text')
     # result = check_text(
     #     "Regularization is a technique that adds a penalty term to the objective function of a machine learning algorithm. It is used to prevent overfitting and to encourage the model to find a simpler and more generalizable solution.",
@@ -59,7 +58,8 @@ async def get_score():
     )
     stdout, stderr = await process.communicate()
     get_audio(0, 168136, '657ae0c1ec9a6e346d8031901', '657ae0c1ec9a6e346d803180')
-    return f"result-get_score - {os.path.exists('657ae0c1ec9a6e346d8031901.mp3')}"
+    audio_text = get_text("657ae0c1ec9a6e346d8031901.mp3")
+    return f"result-text - {audio_text}"
 
 
 @app.get('/ping')
