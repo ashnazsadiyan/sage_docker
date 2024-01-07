@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "sagemaker_assume_role_policy" {
 }
 
 resource "aws_iam_role" "sagemaker_access_iam_role" {
-  name               = "sagemaker_access_iam_role6"
+  name               = "sagemaker_access_iam_role18"
   path               = "/system/"
   assume_role_policy = data.aws_iam_policy_document.sagemaker_assume_role_policy.json
 }
@@ -28,7 +28,7 @@ variable container_image {}
 
 
 resource "aws_sagemaker_model" "mnist-model" {
-  name               = "mnist-model1"
+  name               = "mnist-model4"
   execution_role_arn = aws_iam_role.sagemaker_access_iam_role.arn
 
   primary_container {
@@ -51,8 +51,8 @@ resource "aws_sagemaker_endpoint_configuration" "mnist-configuration" {
   }
 }
 
-resource "aws_sagemaker_endpoint" "mnist_endpoint_2" {
-  name                 = "mnist-endpoint-2"
+resource "aws_sagemaker_endpoint" "mnist_endpoint_9" {
+  name                 = "mnist-endpoint-10"
   endpoint_config_name = aws_sagemaker_endpoint_configuration.mnist-configuration.name
 
   tags = {
@@ -61,11 +61,11 @@ resource "aws_sagemaker_endpoint" "mnist_endpoint_2" {
 }
 
 output "sagemaker_endpoint_name" {
-  value       = aws_sagemaker_endpoint.mnist_endpoint_2.name
+  value       = aws_sagemaker_endpoint.mnist_endpoint_9.name
   description = "SageMaker Endpoint Name"
 }
 
 output "sagemaker_endpoint_arn" {
-  value       = aws_sagemaker_endpoint.mnist_endpoint_2.arn
+  value       = aws_sagemaker_endpoint.mnist_endpoint_9.arn
   description = "SageMaker Endpoint ARN"
 }
