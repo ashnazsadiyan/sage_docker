@@ -27,10 +27,10 @@ async def get_audio(start_time: float, end_time: float, _id: str, identification
     audio_segment.export(extracted_file, format='mp3')
 
 
-# async def get_text(file_name: str):
-#     model = await whisper.load_model("base")
-#     result = model.transcribe(file_name, fp16=False)
-#     return result["text"]
+async def get_text(file_name: str):
+    model = await whisper.load_model("base")
+    result = model.transcribe(file_name, fp16=False)
+    return result["text"]
 
 
 # def check_text(expected_answer: str, given_answer: str, question: str):
@@ -56,9 +56,9 @@ async def get_score():
         stderr=asyncio.subprocess.PIPE
     )
     stdout, stderr = await process.communicate()
-    get_audio(0, 168136, '657ae0c1ec9a6e346d8031901', '657ae0c1ec9a6e346d803180')
-    # audio_text = get_text("657ae0c1ec9a6e346d8031901.mp3")
-    return f"result-text - i am text"
+    await get_audio(0, 168136, '657ae0c1ec9a6e346d8031901', '657ae0c1ec9a6e346d803180')
+    audio_text = await get_text("657ae0c1ec9a6e346d8031901.mp3")
+    return f"result-text - f{audio_text}"
 
 
 @app.get('/ping')
