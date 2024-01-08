@@ -16,6 +16,7 @@ RUN apt-get update && \
 COPY requirements.txt requirements.txt
 
 RUN python3 -m pip install -r requirements.txt
+RUN pip install -U openai-whisper
 
 WORKDIR .
 

@@ -20,17 +20,17 @@ app = FastAPI()
 #         self.result = 0
 
 
-def get_audio(start_time: float, end_time: float, _id: str, identification: str, ):
-    audio = AudioSegment.from_file(f'{identification}.WAV')
+async def get_audio(start_time: float, end_time: float, _id: str, identification: str, ):
+    audio = await AudioSegment.from_file(f'{identification}.WAV')
     audio_segment = audio[start_time:end_time]
     extracted_file = f"{_id}.mp3"
     audio_segment.export(extracted_file, format='mp3')
 
 
-def get_text(file_name: str):
-    model = whisper.load_model("base")
-    result = model.transcribe(file_name, fp16=False)
-    return result["text"]
+# async def get_text(file_name: str):
+#     model = await whisper.load_model("base")
+#     result = model.transcribe(file_name, fp16=False)
+#     return result["text"]
 
 
 # def check_text(expected_answer: str, given_answer: str, question: str):
@@ -43,7 +43,6 @@ def get_text(file_name: str):
 
 
 async def get_score():
-    # print(audio_text, 'audio_text')
     # result = check_text(
     #     "Regularization is a technique that adds a penalty term to the objective function of a machine learning algorithm. It is used to prevent overfitting and to encourage the model to find a simpler and more generalizable solution.",
     #     audio_text, "What is regularization in machine learning?")
@@ -58,8 +57,8 @@ async def get_score():
     )
     stdout, stderr = await process.communicate()
     get_audio(0, 168136, '657ae0c1ec9a6e346d8031901', '657ae0c1ec9a6e346d803180')
-    audio_text = get_text("657ae0c1ec9a6e346d8031901.mp3")
-    return f"result-text - {audio_text}"
+    # audio_text = get_text("657ae0c1ec9a6e346d8031901.mp3")
+    return f"result-text - i am text"
 
 
 @app.get('/ping')
@@ -67,7 +66,7 @@ def pint():
     return {"pong": "pong"}
 
 
-@app.get('/invocations')
+@app.post('/invocations')
 async def invoke(response: Response):
     try:
         resulted_text = await get_score()
@@ -75,4 +74,4 @@ async def invoke(response: Response):
     except Exception as e:
         print(e)
         response.status_code = 500
-        return {"message": "something went wrong"}
+        return {"message": e}
